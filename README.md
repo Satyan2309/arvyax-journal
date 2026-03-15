@@ -1,30 +1,42 @@
 # 🌿 ArvyaX AI-Assisted Journal System
 
-An AI-powered wellness journal for nature immersion sessions. Users write journal entries after forest, ocean, or mountain sessions — the system analyzes emotions using Google Gemini LLM and shows mental wellness insights over time.
+## 🌐 Live Demo
+
+| | URL |
+|---|---|
+| **Frontend** | https://arvyax-journal-ruddy.vercel.app |
+| **Backend API** | https://arvyax-journal-zdc2.onrender.com |
+| **Health Check** | https://arvyax-journal-zdc2.onrender.com/health |
+
+> ⚠️ Backend is hosted on Render free tier — first request may take up to 30 seconds to wake up after inactivity. Subsequent requests are fast.
+
+An AI-powered wellness journal for nature immersion sessions. Users write journal entries after forest, ocean, or mountain sessions — the system analyzes emotions using NVIDIA NIM (Llama 3.1 8B) and shows mental wellness insights over time.
 
 ---
 
 ## 📋 Features
 
 - ✅ Create journal entries with ambience (forest / ocean / mountain)
-- ✅ LLM emotion analysis via Google Gemini 1.5 Flash
+- ✅ LLM emotion analysis via NVIDIA NIM — meta/llama-3.1-8b-instruct
 - ✅ Aggregated insights (top emotion, most-used ambience, keywords)
-- ✅ Analysis caching via MD5 hash (avoids redundant LLM calls)
-- ✅ Rate limiting on API and LLM endpoints
-- ✅ Streaming LLM response (bonus)
+- ✅ Analysis caching via MD5 hash — avoids redundant LLM calls (bonus)
+- ✅ Rate limiting on API and LLM endpoints (bonus)
+- ✅ Streaming LLM response via SSE (bonus)
 - ✅ Docker setup (bonus)
+- ✅ Deployed demo — live on Vercel + Render (bonus)
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer     | Technology               |
-|-----------|--------------------------|
-| Backend   | Node.js + Express        |
-| Database  | MongoDB + Mongoose       |
+| Layer     | Technology                              |
+|-----------|-----------------------------------------|
+| Backend   | Node.js + Express                       |
+| Database  | MongoDB + Mongoose (Atlas cloud)        |
 | LLM       | NVIDIA NIM — meta/llama-3.1-8b-instruct |
-| Frontend  | React + Vite             |
-| Container | Docker + Docker Compose  |
+| Frontend  | React + Vite                            |
+| Container | Docker + Docker Compose                 |
+| Hosting   | Vercel (frontend) + Render (backend)    |
 
 ---
 
@@ -33,7 +45,7 @@ An AI-powered wellness journal for nature immersion sessions. Users write journa
 ### Prerequisites
 - Node.js v18+
 - MongoDB running locally (`mongodb://localhost:27017`)
-- Google Gemini API key — get free at [aistudio.google.com](https://aistudio.google.com)
+- NVIDIA NIM API key — get free at [build.nvidia.com](https://build.nvidia.com)
 
 ### 1. Clone the repository
 ```bash
@@ -85,8 +97,8 @@ Visit [http://localhost:5173](http://localhost:5173)
 git clone https://github.com/your-username/arvyax-journal.git
 cd arvyax-journal
 
-# Create .env file in root with your Gemini key
-echo "GEMINI_API_KEY=your_gemini_api_key_here" > .env
+# Create .env file with your NVIDIA NIM API key
+echo "NVIDIA_API_KEY=nvapi-xxxxxxxxxxxxxxxxxxxx" > .env
 
 # Start all services (MongoDB + Backend + Frontend)
 docker-compose up --build
@@ -145,8 +157,8 @@ Get all journal entries for a user.
 ---
 
 ### POST `/api/journal/analyze`
-Analyze emotion from text using Gemini LLM.
-Results are cached — identical text won't call the LLM twice.
+Analyze emotion from text using NVIDIA NIM (Llama 3.1 8B).
+Results are cached — identical text will not call the LLM twice.
 
 **Request:**
 ```json
@@ -217,6 +229,7 @@ Streaming LLM analysis via Server-Sent Events (SSE).
 | `NVIDIA_API_KEY` | NVIDIA NIM API key (required) | — |
 | `PORT` | Backend server port | `5000` |
 | `NODE_ENV` | Environment | `development` |
+| `FRONTEND_URL` | Allowed frontend origin for CORS | — |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window in ms | `60000` |
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | `30` |
 
@@ -232,9 +245,9 @@ arvyax-journal/
 │   │   ├── models/Journal.js         # Mongoose schema
 │   │   ├── routes/journal.js         # Route definitions
 │   │   ├── controllers/
-│   │   │   └── journalController.js  # Business logic
+│   │   │   └── journalController.js  # Business logic + caching
 │   │   ├── services/
-│   │   │   └── llmService.js         # Gemini LLM abstraction
+│   │   │   └── llmService.js         # NVIDIA NIM abstraction layer
 │   │   ├── middleware/
 │   │   │   └── rateLimiter.js        # Rate limiting
 │   │   └── app.js                    # Express entry point
@@ -287,6 +300,12 @@ arvyax-journal/
 ## Health Check
 
 ```bash
+# Local
 curl http://localhost:5000/health
+
+# Production
+curl https://arvyax-journal-zdc2.onrender.com/health
+
+# Expected response
 # { "status": "ok", "message": "ArvyaX Journal API is running" }
 ```
