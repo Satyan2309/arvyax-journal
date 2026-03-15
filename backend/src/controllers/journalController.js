@@ -110,7 +110,7 @@ const analyzeEntry = async (req, res) => {
     }
     // ── END CACHE CHECK ───────────────────────────────────────
 
-    console.log("🤖 Cache MISS — calling Gemini LLM");
+    console.log("🤖 Cache MISS — calling NVIDIA NIM LLM");
     const result = await analyzeEmotion(text);
 
     // If entryId provided, update that journal entry with the analysis
