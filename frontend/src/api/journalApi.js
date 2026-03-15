@@ -1,11 +1,15 @@
 import axios from "axios";
 
+
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : "/api";
+
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// ── Journal APIs ──────────────────────────────────────────────
 
 // Create a new journal entry
 export const createEntry = (userId, ambience, text) =>
